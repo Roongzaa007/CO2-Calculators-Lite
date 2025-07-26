@@ -11,6 +11,12 @@
             box-sizing: border-box;
         }
         
+        // Helper function to set target CO2 values
+        function setTargetCO2(value) {
+            document.getElementById('targetCO2').value = value;
+            calculate();
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -452,7 +458,7 @@
         .results-section {
             margin-top: 30px;
             padding: 25px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
             border-radius: 15px;
             color: white;
         }
@@ -541,10 +547,79 @@
                 <button class="report-btn" onclick="exportToWord()">
                     📝 Export Word
                 </button>
+                <button class="report-btn" onclick="showAbout()">
+                    ℹ️ About & Features
+                </button>
             </div>
         </div>
         
-        <!-- Report Modal -->
+        <!-- About Modal -->
+        <div id="aboutModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>ℹ️ About ASHRAE 62.1 Calculator</h3>
+                    <span class="close" onclick="closeAbout()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #2c3e50;">
+                        <h4 style="color: #667eea; margin-bottom: 15px;">📋 ASHRAE 62.1-2022 Calculator v1.0.0 - LITE Edition</h4>
+                        <ul style="padding-left: 20px; margin-bottom: 25px;">
+                            <li><strong>CO2 Target Guidelines:</strong> 800 ppm (Premium/LEED), 1000 ppm (WHO/Standard), 1200 ppm (Minimum)</li>
+                            <li><strong>Standards Reference:</strong> EN 16798-1, WHO, ASHRAE, LEED v4.1, WELL Building</li>
+                            <li><strong>Professional Reports:</strong> 📄 Generate comprehensive calculation reports with project details</li>
+                            <li><strong>Export Options:</strong> 📈 CSV export (LITE) | 📄 PDF, Excel, Word (PRO upgrade)</li>
+                            <li><strong>Dual Unit System:</strong> SI (เมตริก) และ I-P (อิมพีเรียล) สำหรับความสะดวกในการใช้งาน</li>
+                            <li><strong>Recommended OA:</strong> ระบบเลือกค่าที่สูงกว่าระหว่าง ASHRAE 62.1 และ CO2-based requirements</li>
+                            <li><strong>ASHRAE 62.1 Compliance:</strong> ตาม Table 6.2.2.1 พร้อมการคำนวณ Rp + Ra</li>
+                            <li><strong>Mobile Responsive:</strong> ใช้งานได้ทั้งคอมพิวเตอร์และมือถือ</li>
+                            <li><strong>Color Coding:</strong> 🟢 ≤800ppm ดีเยี่ยม | 🟡 ≤1000ppm ดี | 🟠 ≤1200ppm พอใช้ | 🔴 >1200ppm ปรับปรุง</li>
+                            <li><strong>LITE Features:</strong> การคำนวณพื้นฐาน, 40+ ประเภทพื้นที่, Unit Conversion, Report Preview</li>
+                            <li><strong>PRO Upgrade:</strong> 💼 PDF Reports, Excel Charts, Multi-zone, API Access, Team Collaboration</li>
+                        </ul>
+                        
+                        <h4 style="color: #667eea; margin: 25px 0 15px 0;">🎯 CO2 Target Selection Guide</h4>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                            <table style="width: 100%; font-size: 0.9em;">
+                                <tr style="background: #667eea; color: white;">
+                                    <th style="padding: 8px; text-align: left;">Building Type</th>
+                                    <th style="padding: 8px; text-align: center;">Target CO2</th>
+                                    <th style="padding: 8px; text-align: left;">Standard</th>
+                                </tr>
+                                <tr><td style="padding: 5px;">🏥 Hospital/Healthcare</td><td style="padding: 5px; text-align: center;">600-800 ppm</td><td style="padding: 5px;">Patient safety</td></tr>
+                                <tr style="background: #f8f9fa;"><td style="padding: 5px;">🎓 Schools/Education</td><td style="padding: 5px; text-align: center;">800 ppm</td><td style="padding: 5px;">EN 16798-1 Cat I</td></tr>
+                                <tr><td style="padding: 5px;">🏢 Premium Office</td><td style="padding: 5px; text-align: center;">800 ppm</td><td style="padding: 5px;">LEED/WELL</td></tr>
+                                <tr style="background: #f8f9fa;"><td style="padding: 5px;">🏢 Standard Office</td><td style="padding: 5px; text-align: center;">1000 ppm</td><td style="padding: 5px;">WHO Guidelines</td></tr>
+                                <tr><td style="padding: 5px;">🏪 Retail/Commercial</td><td style="padding: 5px; text-align: center;">1000 ppm</td><td style="padding: 5px;">General use</td></tr>
+                                <tr style="background: #f8f9fa;"><td style="padding: 5px;">🍽️ Restaurant</td><td style="padding: 5px; text-align: center;">1000-1200 ppm</td><td style="padding: 5px;">High density</td></tr>
+                                <tr><td style="padding: 5px;">🏋️ Gym/Fitness</td><td style="padding: 5px; text-align: center;">1200 ppm</td><td style="padding: 5px;">Heavy activity</td></tr>
+                            </table>
+                        </div>
+                        
+                        <h4 style="color: #667eea; margin: 25px 0 15px 0;">📚 Standards & Certifications</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px;">
+                                <h5 style="margin-bottom: 10px; color: #1976d2;">🌍 International Standards</h5>
+                                <ul style="font-size: 0.9em; margin: 0;">
+                                    <li><strong>EN 16798-1:</strong> European standard</li>
+                                    <li><strong>WHO:</strong> ≤ 1000 ppm recommended</li>
+                                    <li><strong>ASHRAE 62.1:</strong> Ventilation baseline</li>
+                                    <li><strong>ISO 17772-1:</strong> Energy performance</li>
+                                </ul>
+                            </div>
+                            <div style="background: #e8f5e8; padding: 15px; border-radius: 8px;">
+                                <h5 style="margin-bottom: 10px; color: #388e3c;">🏆 Green Certifications</h5>
+                                <ul style="font-size: 0.9em; margin: 0;">
+                                    <li><strong>LEED v4.1:</strong> ≤ 1000 ppm above outdoor</li>
+                                    <li><strong>WELL Building:</strong> ≤ 800 ppm above outdoor</li>
+                                    <li><strong>BREEAM:</strong> ≤ 800 ppm (Excellent)</li>
+                                    <li><strong>Thai TGBI:</strong> ≤ 800 ppm (Gold)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="reportModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -696,6 +771,13 @@
                 <div class="form-group">
                     <label for="targetCO2">Target CO2 Level: <span class="unit">ppm</span></label>
                     <input type="number" id="targetCO2" value="1000" min="500" max="1500" step="50">
+                    <div style="font-size: 0.85em; color: #7f8c8d; margin-top: 5px;">
+                        <strong>แนะนำ:</strong> 
+                        <span style="cursor: pointer; color: #667eea;" onclick="setTargetCO2(800)">800 ppm (Premium)</span> | 
+                        <span style="cursor: pointer; color: #667eea;" onclick="setTargetCO2(1000)">1000 ppm (Standard)</span> | 
+                        <span style="cursor: pointer; color: #667eea;" onclick="setTargetCO2(1200)">1200 ppm (Minimum)</span>
+                        <br><small>ตาม EN 16798-1, WHO, LEED standards</small>
+                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -805,12 +887,7 @@
         <div class="info-section">
             <h4>📋 ASHRAE 62.1-2022 Calculator v1.0.0 - LITE Edition</h4>
             <ul>
-                <li><strong>Professional Reports:</strong> 📄 Generate comprehensive calculation reports with project details</li>
-                <li><strong>Export Options:</strong> 📈 CSV export (LITE) | 📄 PDF, Excel, Word (PRO upgrade)</li>
-                <li><strong>Dual Unit System:</strong> SI (เมตริก) และ I-P (อิมพีเรียล) สำหรับความสะดวกในการใช้งาน</li>
-                <li><strong>Recommended OA:</strong> ระบบเลือกค่าที่สูงกว่าระหว่าง ASHRAE 62.1 และ CO2-based requirements</li>
-                <li><strong>ASHRAE 62.1 Compliance:</strong> ตาม Table 6.2.2.1 พร้อมการคำนวณ Rp + Ra</li>
-                <li><strong>Mobile Responsive:</strong> ใช้งานได้ทั้งคอมพิวเตอร์และมือถือ</li>
+                <li><strong>CO2 Target Guidelines:</strong> 800 ppm (Premium/LEED), 1000 ppm (WHO/Standard), 1200 ppm (Minimum)</li>
                 <li><strong>Color Coding:</strong> 🟢 ≤800ppm ดีเยี่ยม | 🟡 ≤1000ppm ดี | 🟠 ≤1200ppm พอใช้ | 🔴 >1200ppm ปรับปรุง</li>
                 <li><strong>LITE Features:</strong> การคำนวณพื้นฐาน, 40+ ประเภทพื้นที่, Unit Conversion, Report Preview</li>
                 <li><strong>PRO Upgrade:</strong> 💼 PDF Reports, Excel Charts, Multi-zone, API Access, Team Collaboration</li>
@@ -1377,6 +1454,14 @@
             document.getElementById('reportModal').style.display = 'none';
         }
         
+        function showAbout() {
+            document.getElementById('aboutModal').style.display = 'block';
+        }
+        
+        function closeAbout() {
+            document.getElementById('aboutModal').style.display = 'none';
+        }
+        
         function exportToPDF() {
             // For LITE version - show upgrade message
             alert('📄 PDF Export\n\nThis feature is available in the PRO version.\n\n✅ Professional PDF reports\n✅ Custom branding\n✅ Multi-project management\n\nContact us to upgrade!');
@@ -1439,9 +1524,14 @@
         
         // Close modal when clicking outside
         window.onclick = function(event) {
-            const modal = document.getElementById('reportModal');
-            if (event.target === modal) {
+            const reportModal = document.getElementById('reportModal');
+            const aboutModal = document.getElementById('aboutModal');
+            
+            if (event.target === reportModal) {
                 closeReport();
+            }
+            if (event.target === aboutModal) {
+                closeAbout();
             }
         }
         
